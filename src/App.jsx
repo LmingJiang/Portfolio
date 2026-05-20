@@ -1,28 +1,54 @@
+import Navigation from './components/Navigation';
 import Hero from './components/Hero';
-import About from './components/About';
-import Works from './components/Works';
-import Capabilities from './components/Capabilities';
-import Process from './components/Process';
-import CasePreview from './components/CasePreview';
-import Contact from './components/Contact';
+import NumberedSection from './components/NumberedSection';
+import AboutNarrative from './components/AboutNarrative';
+import CardGrid from './components/CardGrid';
+import CollectionsGrid from './components/CollectionsGrid';
+import Triptych from './components/Triptych';
+import Newsletter from './components/Newsletter';
+import Footer from './components/Footer';
+import CustomCursor from './components/CustomCursor';
+import ScrollProgress from './components/ScrollProgress';
+import useLenis from './hooks/useLenis';
 
-const SectionFrame = ({ id, children }) => (
-  <section id={id} className="mx-auto w-full max-w-6xl px-6 py-20 md:px-10">{children}</section>
-);
+const works = [1,2,3,4,5].map((n) => ({
+  number: `0${n}`,
+  category: ['Smart Factory', 'Digital Twin', 'Operations Center', 'Sales Enablement', 'Visualization'][n-1],
+  title: ['全友智能工厂', '建筑孪生一体化平台', '七馆一中心运营中心', '数字营销平台 / PAD', 'Enterprise Visualization System'][n-1],
+  description: 'Turn complex systems, data and business logic into clear, decision-ready and sales-ready experiences.',
+  ctaText: 'See details',
+  image: `https://images.unsplash.com/photo-15${50+n}00000000-6f0f?auto=format&fit=crop&w=1800&q=80`,
+  reverse: n % 2 === 0
+}));
+
+const news = [
+  { image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&q=80&auto=format&fit=crop', title: 'Case Release: Smart Factory', date: 'May 2026', category: 'Case Study' },
+  { image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80&auto=format&fit=crop', title: 'Design System for Twin Ops', date: 'Apr 2026', category: 'Journal' },
+  { image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&q=80&auto=format&fit=crop', title: 'Sales Enablement Toolkit', date: 'Mar 2026', category: 'Update' }
+];
+
+const collections = ['Urban','Nature','RePlastic','Golf','Details'].map((name, idx) => ({
+  name, count: [50,38,22,62,18][idx], images: new Array(6).fill('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=60&auto=format&fit=crop')
+}));
 
 export default function App() {
+  useLenis();
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-ink text-slate-100">
-      <div className="fixed inset-0 -z-10 bg-grid bg-[size:44px_44px] opacity-70" />
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.22),transparent_45%),radial-gradient(circle_at_80%_15%,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_50%_80%,rgba(20,184,166,0.15),transparent_40%)]" />
-
+    <div className="bg-[#04070d] text-white">
+      <ScrollProgress />
+      <CustomCursor />
+      <Navigation />
       <Hero />
-      <SectionFrame id="about"><About /></SectionFrame>
-      <SectionFrame id="works"><Works /></SectionFrame>
-      <SectionFrame id="capabilities"><Capabilities /></SectionFrame>
-      <SectionFrame id="process"><Process /></SectionFrame>
-      <SectionFrame id="case"><CasePreview /></SectionFrame>
-      <SectionFrame id="contact"><Contact /></SectionFrame>
+      <main id="works" className="mx-auto max-w-[1440px] px-6 md:px-20">
+        {works.map((w) => <NumberedSection key={w.number} {...w} />)}
+        <AboutNarrative />
+        <CardGrid id="news" label="Recent News" items={news} />
+        <CardGrid label="Recent Addings" items={news} />
+        <CollectionsGrid collections={collections} />
+        <Triptych />
+        <Newsletter />
+      </main>
+      <Footer />
     </div>
   );
 }

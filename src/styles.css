@@ -2,17 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+:root { font-family: Inter, system-ui, sans-serif; }
+html, body, #root { margin: 0; min-height: 100%; background: #04070d; }
+
+body { color: #fff; }
+.font-serif { font-family: 'Georgia', 'Times New Roman', serif; }
+
+.bg-grid {
+  background-image: linear-gradient(to right, rgba(56,189,248,.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(56,189,248,.08) 1px, transparent 1px);
 }
 
-html,
-body,
-#root {
-  margin: 0;
-  min-height: 100%;
+.link-underline { position: relative; }
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width .4s ease;
 }
+.link-underline:hover::after { width: 100%; }
 
-a {
-  text-decoration: none;
+.cursor-outer, .cursor-inner {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  mix-blend-mode: difference;
+}
+.cursor-outer {
+  width: 40px; height: 40px; margin-left: -20px; margin-top: -20px;
+  border: 1px solid rgba(255,255,255,.8); border-radius: 9999px;
+}
+.cursor-inner {
+  width: 8px; height: 8px; margin-left: -4px; margin-top: -4px;
+  background: #fff; border-radius: 9999px;
 }
