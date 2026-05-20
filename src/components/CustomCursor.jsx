@@ -5,25 +5,53 @@ export default function CustomCursor() {
 
   useEffect(() => {
     if (window.innerWidth < 768) return;
-    setEnabled(true);
-    const body = document.body;
-    body.classList.add('cursor-none');
-    const outer = document.querySelector('.cursor-outer');
-    const inner = document.querySelector('.cursor-inner');
-    let tx = 0, ty = 0, ox = 0, oy = 0, ix = 0, iy = 0;
 
-    const mm = (e) => { tx = e.clientX; ty = e.clientY; };
-    window.addEventListener('mousemove', mm);
-    const raf = () => {
-      ox += (tx - ox) * 0.15; oy += (ty - oy) * 0.15; ix += (tx - ix) * 0.25; iy += (ty - iy) * 0.25;
+    setEnabled(true);
+
+    let rafId;
+    let tx = 0;
+    let ty = 0;
+    let ox = 0;
+    let oy = 0;
+    let ix = 0;
+    let iy = 0;
+
+    const move = (e) => {
+      tx = e.clientX;
+      ty = e.clientY;
+    };
+
+    window.addEventListener('mousemove', move);
+
+    const animate = () => {
+      const outer = document.querySelector('.cursor-outer');
+      const inner = document.querySelector('.cursor-inner');
+
+      ox += (tx - ox) * 0.15;
+      oy += (ty - oy) * 0.15;
+      ix += (tx - ix) * 0.25;
+      iy += (ty - iy) * 0.25;
+
       if (outer) outer.style.transform = `translate(${ox}px, ${oy}px)`;
       if (inner) inner.style.transform = `translate(${ix}px, ${iy}px)`;
-      requestAnimationFrame(raf);
+
+      rafId = requestAnimationFrame(animate);
     };
-    requestAnimationFrame(raf);
-    return () => { window.removeEventListener('mousemove', mm); body.classList.remove('cursor-none'); };
+
+    rafId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('mousemove', move);
+    };
   }, []);
 
   if (!enabled) return null;
-  return <><div className="cursor-outer" /><div className="cursor-inner" /></>;
+
+  return (
+    <>
+      <div className="cursor-outer" />
+      <div className="cursor-inner" />
+    </>
+  );
 }
