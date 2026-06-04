@@ -1,62 +1,67 @@
-import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const links = [
-  { id: 'works', label: 'Works' },
-  { id: 'about', label: 'About' },
-  { id: 'news', label: 'Journal' },
-  { id: 'process', label: 'Process' },
-  { id: 'contact', label: 'Contact' }
+  { href: '/works', label: 'Works' },
+  { href: '/about', label: 'About' },
+  { href: '/journal', label: 'Journal' },
+  { href: '/process', label: 'Process' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export default function Navigation() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 100);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const go = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    setOpen(false);
-  };
+  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
 
   return (
-    <>
-      <header className={`fixed inset-x-0 top-0 z-50 transition ${scrolled ? 'bg-[#0a0a0af2] backdrop-blur-xl' : 'bg-transparent'}`}>
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-5 md:px-20">
-          <p className="text-xs uppercase tracking-[0.28em] text-cyan-100">Complex Systems</p>
-          <button onClick={() => setOpen((v) => !v)} className="relative h-10 w-10" aria-label="toggle menu">
-            <motion.span animate={open ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }} className="absolute left-2 right-2 top-1/2 h-px bg-white" />
-            <motion.span animate={open ? { opacity: 0 } : { opacity: 1 }} className="absolute left-2 right-2 top-1/2 h-px bg-white" />
-            <motion.span animate={open ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }} className="absolute left-2 right-2 top-1/2 h-px bg-white" />
-          </button>
-        </div>
-      </header>
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-5 py-5 md:px-8">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-[1fr_auto] items-start gap-4 md:grid-cols-[1fr_auto_1fr]">
+        <motion.a
+          href="/"
+          className="pointer-events-auto text-xs uppercase tracking-[0.28em] text-cyan-100/82 transition hover:text-white"
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Complex Systems
+        </motion.a>
 
-      <AnimatePresence>
-        {open && (
-          <motion.nav initial={{ clipPath: 'inset(0 0 100% 0)' }} animate={{ clipPath: 'inset(0 0 0 0)' }} exit={{ clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: 0.6 }} className="fixed inset-0 z-40 bg-[#0a0a0af2] backdrop-blur-[20px]">
-            <div className="mx-auto flex h-full max-w-[1440px] flex-col justify-between px-6 pb-10 pt-24 md:px-20">
-              <div className="space-y-4">
-                {links.map((item, idx) => (
-                  <motion.button key={item.id} onClick={() => go(item.id)} initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.08 }} className="flex items-baseline gap-4">
-                    <span className="text-sm text-white/40">{String(idx + 1).padStart(2, '0')}</span>
-                    <span className="font-serif text-5xl md:text-6xl">{item.label}</span>
-                  </motion.button>
-                ))}
-              </div>
-              <div className="flex items-center justify-between text-sm text-white/60">
-                <p>LinkedIn · Behance · Email</p>
-                <p>© 2026 Portfolio</p>
-              </div>
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </>
+        <nav className="pointer-events-auto col-span-2 flex flex-wrap justify-end gap-1.5 rounded-full border border-cyan-100/12 bg-[#04101d]/55 p-1.5 shadow-[0_0_36px_rgba(34,211,238,0.08)] backdrop-blur-xl md:col-span-1 md:justify-center">
+          {links.map((item) => {
+            const active = currentPath === item.href;
+
+            return (
+              <motion.a
+                key={item.href}
+                href={item.href}
+                className="group relative overflow-hidden rounded-full px-4 py-2.5 text-xs font-medium uppercase tracking-[0.08em] text-white transition md:px-5"
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.96 }}
+              >
+                <span
+                  className={`absolute inset-0 rounded-full transition duration-300 ${
+                    active ? 'bg-cyan-300/18' : 'bg-transparent group-hover:bg-white/8'
+                  }`}
+                />
+                <span
+                  className={`relative transition duration-300 ${
+                    active ? 'text-cyan-100' : 'text-white/72 group-hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </motion.a>
+            );
+          })}
+        </nav>
+
+        <div className="pointer-events-auto hidden justify-end md:flex">
+          <motion.a
+            href="/contact"
+            className="text-xs uppercase tracking-[0.18em] text-white/60 transition hover:text-cyan-100"
+            whileHover={{ y: -2 }}
+          >
+            EN
+          </motion.a>
+        </div>
+      </div>
+    </header>
   );
 }
